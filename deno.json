@@ -1,0 +1,9 @@
+{
+  "tasks": {
+    "test": "deno test -A",
+    "dev": "DEV=dev deno run -A index.ts",
+    "getHtml": "deno run -A bookmark.ts",
+    "notion": "deno run -A notion.ts"
+  },
+  "importMap": "./import_map.json"
+}
