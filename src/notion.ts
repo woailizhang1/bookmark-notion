@@ -2,10 +2,10 @@ import 'dotenv/load.ts';
 import { CreatePageBodyParameters } from 'notion/api-endpoints.ts';
 import { Client } from 'notion/mod.ts';
 import { ClientOptions } from 'notion/Client.ts';
-import { Bookmark } from '/@/get_bookmark/type.ts';
+
 import { delay } from '/#/async/delay.ts';
 
-export async function batchApi<T>(
+async function batchApi<T>(
   spaceRunFuncList: any[],
   continuousMax = 10,
   space = 1000
@@ -23,26 +23,13 @@ export async function batchApi<T>(
   await Promise.all(promiseList);
   return [normalList, errList];
 }
-
-interface CreatePageBodyParametersList {
-  (id: string, data: any): CreatePageBodyParameters;
-}
 class NotionDatabaseClient extends Client {
   constructor(options?: ClientOptions) {
     super(options);
   }
-  batchCreate(
-    id: string,
-    data: any,
-    createBatchProperties: CreatePageBodyParametersList
-  ) {
-    const batchPropertiesList: CreatePageBodyParameters[] = data.map(
-      (item: any) => {
-        return createBatchProperties(id, item);
-      }
-    );
+  batchCreate(createBatchProperties: CreatePageBodyParameters[]) {
     return batchApi(
-      batchPropertiesList.map((properties: CreatePageBodyParameters) => {
+      createBatchProperties.map((properties: CreatePageBodyParameters) => {
         return () => this.pages.create(properties);
       })
     );
